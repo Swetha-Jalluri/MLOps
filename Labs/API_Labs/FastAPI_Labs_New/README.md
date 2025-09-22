@@ -22,7 +22,6 @@ The workflow involves the following steps:
 mlops_labs
 └── fastapi_labnew
     ├── assets/
-    ├── fastapi_labnew_env/
     ├── model/
     │   ├── wine_model.pkl
     │   └── wine_scaler.pkl
