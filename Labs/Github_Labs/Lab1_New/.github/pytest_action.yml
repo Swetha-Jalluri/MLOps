@@ -1,0 +1,61 @@
+name: Wine Model Testing with Pytest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Pytest with Coverage
+      run: |
+        pytest test/test_pytest.py -v --junitxml=pytest-report.xml --cov=src --cov-report=xml --cov-report=term
+      continue-on-error: false
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: pytest-results
+        path: pytest-report.xml
+    
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: coverage-report
+        path: coverage.xml
+    
+    - name: Display test summary
+      if: always()
+      run: |
+        echo "Wine Model Pytest Results"
+        echo "========================="
+        if [ -f pytest-report.xml ]; then
+          echo "Test report generated successfully"
+        fi
+    
+    - name: Notify on success
+      if: success()
+      run: echo "✅ All Wine Model Pytest tests passed successfully!"
+    
+    - name: Notify on failure
+      if: failure()
+      run: echo "❌ Wine Model Pytest tests failed. Please check the logs."
