@@ -1,4 +1,4 @@
-# Lab 1 Execution Guide - Screenshots and Results
+# Lab 1 Execution Guide
 
 ## 1. Airflow Login Page
 
