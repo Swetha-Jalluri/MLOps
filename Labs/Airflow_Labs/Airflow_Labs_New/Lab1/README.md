@@ -198,6 +198,4 @@ After running the DAG, the following files are created:
 
 **Result Achieved:** Optimal K-Means clusters = 8
 
-**All Tasks:** Passed
-
 ---
