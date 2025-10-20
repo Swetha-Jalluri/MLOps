@@ -2,7 +2,7 @@
 
 ## 1. Airflow Login Page
 
-<img width="1920" height="1080" alt="Screenshot (267)" src="https://github.com/user-attachments/assets/1773e75c-cc95-429e-9842-8b62dfd4047c" />
+<img width="1915" height="802" alt="Screenshot (250)" src="https://github.com/user-attachments/assets/51ac32f3-d7fc-42ec-8213-289dcb9e8a15" />
 
 
 **Description:** Access Airflow at `localhost:8080` and login with credentials:
@@ -15,7 +15,8 @@ This page appears when you first navigate to the Airflow web interface. After en
 
 ## 2. DAGs List View
 
-![DAGs List](screenshots/2_dag_list.png)
+<img width="1920" height="930" alt="Screenshot (265)" src="https://github.com/user-attachments/assets/b7850db3-b04f-4e4d-b63e-f1769263d8c8" />
+
 
 **Description:** The Airflow dashboard displaying all available DAGs:
 - **Airflow_Lab1** - Main K-Means clustering DAG (owner: your_name)
@@ -31,7 +32,8 @@ Shows:
 
 ## 3. DAG Summary Page
 
-![DAG Summary](screenshots/3_dag_details.png)
+<img width="1920" height="911" alt="Screenshot (266)" src="https://github.com/user-attachments/assets/7ad03114-1ed7-4cad-b031-b13fffad2502" />
+
 
 **Description:** Clicking on Airflow_Lab1 shows the DAG summary with:
 - Total Tasks: 4
@@ -47,7 +49,8 @@ This page provides an overview before running the DAG.
 
 ## 4. DAG Execution Graph - All Tasks Successful
 
-![DAG Execution](screenshots/4_dag_execution_graph.png)
+<img width="1920" height="934" alt="Screenshot (269)" src="https://github.com/user-attachments/assets/c771b84e-6222-46ef-a4c3-70f692b2ea66" />
+
 
 **Description:** Graph view showing complete workflow execution in sequence:
 
@@ -85,23 +88,14 @@ This page provides an overview before running the DAG.
 
 ## 5. Results - Optimal Clusters Found
 
-![Optimal Clusters Result](screenshots/5_optimal_clusters_result.png)
+<img width="1920" height="954" alt="Screenshot (270)" src="https://github.com/user-attachments/assets/ef27eec2-12c3-4dc4-96ab-d2dd0a5c5afb" />
+
 
 **Description:** Task logs from the final `load_model_task` showing the critical result:
 
 ```
 [2025-10-20, 17:31:36 UTC] (logging_mixin.py:188) INFO - Optimal no. of clusters: 8
 ```
-
-**Key Information Extracted from Logs:**
-- Task: load_model_task
-- Attempt: 1
-- Status: SUCCESS
-- Optimal number of clusters determined: **8**
-- Test prediction value: 5
-- Method: KneeLocator with elbow method analysis
-
-This is the main deliverable of Lab 1 - determining that 8 is the optimal number of clusters for the advertising dataset using K-Means clustering and the elbow method.
 
 ---
 
@@ -113,20 +107,6 @@ This is the main deliverable of Lab 1 - determining that 8 is the optimal number
 | 2 | data_preprocessing_task | Serialized data | Normalize features | Normalized array | ✓ Success |
 | 3 | build_save_model_task | Normalized data | Train K-Means 1-50 | SSE values + model | ✓ Success |
 | 4 | load_model_task | SSE + model | Elbow method | **Clusters: 8** | ✓ Success |
-
----
-
-## Execution Timeline
-
-**October 20, 2025, 17:31:16 UTC**
-
-- **17:31:16** - DAG triggered manually
-- **17:31:35** - load_data_task completed (5 seconds)
-- **17:31:36** - data_preprocessing_task completed (1 second)
-- **17:31:36** - build_save_model_task completed (0 seconds)
-- **17:31:36** - load_model_task completed (0 seconds)
-- **Total Duration:** 20 seconds
-- **Final Status:** SUCCESS
 
 ---
 
@@ -159,7 +139,7 @@ This is the main deliverable of Lab 1 - determining that 8 is the optimal number
 
 ---
 
-## How to Reproduce Lab 1
+## Steps to run Lab 1
 
 ### Prerequisites
 - Docker Desktop installed and running
@@ -197,38 +177,8 @@ This is the main deliverable of Lab 1 - determining that 8 is the optimal number
 6. **Stop Airflow**
    ```
    docker compose down
+
    ```
-
----
-
-## Troubleshooting During Execution
-
-**Issue:** Tasks showing as running but not completing
-- Solution: Wait 20+ seconds, as K-Means training for 50 clusters takes time
-
-**Issue:** Logs not appearing
-- Solution: Refresh browser (Ctrl+Shift+R) and click on task again
-
-**Issue:** Model file not created
-- Solution: Check that build_save_model_task completed successfully (should be green)
-
-**Issue:** Cluster count not appearing in logs
-- Solution: Ensure load_model_task is green, then scroll down in logs panel
-
----
-
-## Lab 1 Completion Checklist
-
-- [x] Docker and Airflow installed and configured
-- [x] DAG file created with 4 tasks
-- [x] All tasks executed successfully
-- [x] No errors in task logs
-- [x] Model file saved to dags/model/model.sav
-- [x] Optimal clusters determined: 8
-- [x] Results logged and visible in Airflow UI
-- [x] Documentation completed
-- [x] Code pushed to GitHub
-
 ---
 
 ## Files Generated During Execution
@@ -241,14 +191,8 @@ After running the DAG, the following files are created:
 
 ---
 
-## Next Steps
 
-- Proceed to **Lab 2** for email notifications and Flask API monitoring
-- Or make modifications to Lab 1 as part of your contribution
-
----
-
-**Lab Status:** COMPLETED SUCCESSFULLY ✓
+**Lab Status:** COMPLETED SUCCESSFULLY 
 
 **Date Completed:** October 20, 2025
 
