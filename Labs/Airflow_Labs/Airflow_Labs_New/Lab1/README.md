@@ -1,21 +1,21 @@
 # Airflow Lab 1 - Enhanced Version
 
 ## Overview
-This is an enhanced version of the original Airflow Lab 1. The lab has been modified to implement a **supervised machine learning workflow** using Random Forest classification on the Iris dataset, replacing the original unsupervised K-Means clustering approach.
+This is an enhanced version of the original Airflow Lab 1. The lab has been modified to implement a **supervised machine learning workflow** using Random Forest classification on the Wine Quality dataset, replacing the original unsupervised K-Means clustering approach.
 
 
-<img width="1901" height="931" alt="Screenshot (297)" src="https://github.com/user-attachments/assets/def1751e-f29f-4d4b-b5f6-491c8f938486" />
+<img width="1901" height="931" alt="Screenshot (297)" src="https://github.com/user-attachments/assets/1d768479-4051-4804-afc0-d63545286010" />
 
 
 ## Modifications Made
 
 ### 1. Dataset Change
 **Original:** Generic tabular data for clustering  
-**Modified:** UCI Iris Classification Dataset (sklearn built-in)
-- **Features:** 4 features (Sepal Length, Sepal Width, Petal Length, Petal Width)
-- **Samples:** 150 iris flowers
-- **Target:** 3 classes (Setosa, Versicolor, Virginica)
-- **Task:** Binary classification (Virginica vs Others)
+**Modified:** UCI Wine Quality Dataset
+- **Features:** 11 features (fixed acidity, volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide, total sulfur dioxide, density, pH, sulphates, alcohol)
+- **Samples:** 1,599 wine samples
+- **Target:** Quality score (0-10)
+- **Task:** Binary classification (Good wine vs Bad wine, threshold: quality >= 6)
 
 ### 2. Machine Learning Model Change
 **Original:** K-Means Clustering (Unsupervised)  
@@ -42,7 +42,7 @@ This is an enhanced version of the original Airflow Lab 1. The lab has been modi
 ```
 ┌─────────────────────┐
 │   load_data_task    │
-│  (Load Iris Data)   │
+│ (Load Wine Quality) │
 └──────────┬──────────┘
            │
            ▼
@@ -68,10 +68,10 @@ This is an enhanced version of the original Airflow Lab 1. The lab has been modi
 
 ### 1. `dags/src/lab.py`
 Complete rewrite with 4 functions:
-- `load_data()` - Loads Iris dataset using sklearn
-- `data_preprocessing()` - Scales features and converts to binary classification
+- `load_data()` - Loads Wine Quality dataset
+- `data_preprocessing()` - Scales features and converts to binary classification (Good/Bad wine)
 - `build_save_model()` - Trains Random Forest and evaluates performance
-- `load_model_elbow()` - Analyzes feature importance
+- `load_model_elbow()` - Analyzes feature importance for wine quality prediction
 
 ### 2. `dags/airflow.py`
 Updated DAG definition:
@@ -129,7 +129,7 @@ http://localhost:8081
 - Go to Graph tab
 - Click on `load_model_task` (last task)
 - Click "Logs" tab
-- Scroll to see model accuracy and feature importance
+- Scroll to see model accuracy and feature importance rankings
 
 ### Stopping Airflow
 ```bash
@@ -143,10 +143,10 @@ Lab1/
 ├── dags/
 │   ├── src/
 │   │   ├── __init__.py
-│   │   └── lab.py                 # Modified - New logic
+│   │   └── lab.py                 # Modified - Wine Quality + Random Forest
 │   ├── airflow.py                 # Modified - New DAG
-│   ├── data/                       # (Generated at runtime)
-│   └── model/                      # (Generated at runtime)
+│   ├── data/                       # Wine quality data (if local)
+│   └── model/                      # Generated model files
 ├── logs/                           # Execution logs
 ├── config/                         # Configuration
 ├── plugins/                        # Airflow plugins
@@ -160,19 +160,20 @@ Lab1/
 | Aspect | Original | Enhanced |
 |--------|----------|----------|
 | **Problem Type** | Unsupervised (Clustering) | Supervised (Classification) |
-| **Dataset** | Generic data | Iris (well-known benchmark) |
+| **Dataset** | Generic data | Wine Quality (1,599 samples) |
 | **Model** | K-Means | Random Forest |
 | **Output Metrics** | Cluster count | Accuracy, Precision, Recall, F1 |
-| **Feature Analysis** | Cluster centers | Feature importance ranking |
-| **Real-world Use** | Grouping similar items | Predictive classification |
+| **Feature Analysis** | Cluster centers | Feature importance for wine quality |
+| **Real-world Use** | Grouping similar items | Predicting wine quality |
 | **Interpretability** | Low | High |
 
 ## Model Performance
 
-The Random Forest classifier trained on Iris dataset achieves:
-- High accuracy on binary classification task (Virginica detection)
-- Clear feature importance insights
-- Robust generalization with train-test split
+The Random Forest classifier trained on Wine Quality dataset provides:
+- Binary classification of wine quality (Good vs Bad)
+- Identification of most influential factors in wine quality
+- Clear feature importance insights (alcohol, acidity levels, etc.)
+- Robust evaluation metrics (accuracy, precision, recall)
 
 ## Technologies Used
 - **Apache Airflow 2.9.2** - Workflow orchestration
@@ -183,5 +184,5 @@ The Random Forest classifier trained on Iris dataset achieves:
 - **Docker** - Containerization
 
 ## Conclusion
-This enhanced version demonstrates a practical transition from exploratory data analysis (clustering) to predictive analytics (classification). The workflow is production-ready and showcases best practices in MLOps including proper train-test splitting, model evaluation, and feature importance analysis.
+This enhanced version demonstrates a practical transition from exploratory data analysis (clustering) to predictive analytics (classification) using the Wine Quality dataset. The workflow showcases best practices in MLOps including proper train-test splitting, model evaluation, and feature importance analysis.
 
