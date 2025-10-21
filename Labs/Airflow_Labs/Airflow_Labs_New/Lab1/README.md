@@ -1,201 +1,187 @@
-# Airflow Lab 1: K-Means Clustering with Elbow Method
+# Airflow Lab 1 - Enhanced Version
 
-## 1. Airflow Login Page
-
-<img width="1915" height="802" alt="Screenshot (250)" src="https://github.com/user-attachments/assets/51ac32f3-d7fc-42ec-8213-289dcb9e8a15" />
-
-
-**Description:** Access Airflow at `localhost:8080` and login with credentials:
-- Username: `airflow2`
-- Password: `airflow2`
-
-This page appears when you first navigate to the Airflow web interface. After entering credentials, you're redirected to the main DAGs dashboard.
-
----
-
-## 2. DAGs List View
-
-<img width="1920" height="930" alt="Screenshot (265)" src="https://github.com/user-attachments/assets/b7850db3-b04f-4e4d-b63e-f1769263d8c8" />
+## Overview
+This is an enhanced version of the original Airflow Lab 1. The lab has been modified to implement a **supervised machine learning workflow** using Random Forest classification on the Iris dataset, replacing the original unsupervised K-Means clustering approach.
 
 
-**Description:** The Airflow dashboard displaying all available DAGs:
-- **Airflow_Lab1** - Main K-Means clustering DAG (owner: your_name)
-- **test_dag** - Test DAG created during troubleshooting
-
-Shows:
-- Total DAGs: 2
-- Status indicators (All, Active, Paused, Running, Failed)
-- Last run information
-- Quick action buttons (trigger, delete)
-
----
-
-## 3. DAG Summary Page
-
-<img width="1920" height="911" alt="Screenshot (266)" src="https://github.com/user-attachments/assets/7ad03114-1ed7-4cad-b031-b13fffad2502" />
+<img width="1901" height="931" alt="Screenshot (297)" src="https://github.com/user-attachments/assets/def1751e-f29f-4d4b-b5f6-491c8f938486" />
 
 
-**Description:** Clicking on Airflow_Lab1 shows the DAG summary with:
-- Total Tasks: 4
-- All tasks are PythonOperators
-- Schedule: None (manual triggering only)
-- Description: "Dag example for Lab 1 of Airflow series"
-- Owner: your_name
-- DAG ID: Airflow_Lab1
+## Modifications Made
 
-This page provides an overview before running the DAG.
+### 1. Dataset Change
+**Original:** Generic tabular data for clustering  
+**Modified:** UCI Iris Classification Dataset (sklearn built-in)
+- **Features:** 4 features (Sepal Length, Sepal Width, Petal Length, Petal Width)
+- **Samples:** 150 iris flowers
+- **Target:** 3 classes (Setosa, Versicolor, Virginica)
+- **Task:** Binary classification (Virginica vs Others)
 
----
+### 2. Machine Learning Model Change
+**Original:** K-Means Clustering (Unsupervised)  
+**Modified:** Random Forest Classifier (Supervised)
+- **Algorithm:** Random Forest with 100 decision trees
+- **Max Depth:** 10 levels
+- **Problem Type:** Supervised learning (binary classification)
+- **Train-Test Split:** 80-20
 
-## 4. DAG Execution Graph - All Tasks Successful
+### 3. Output Metrics
+**Original:**
+- SSE (Sum of Squared Errors) values
+- Optimal number of clusters using Elbow Method
 
-<img width="1920" height="934" alt="Screenshot (269)" src="https://github.com/user-attachments/assets/c771b84e-6222-46ef-a4c3-70f692b2ea66" />
+**Modified:**
+- Training Accuracy
+- Test Accuracy
+- Precision, Recall, F1-Score
+- Confusion Matrix
+- Feature Importance Ranking
 
-
-**Description:** Graph view showing complete workflow execution in sequence:
-
-1. **load_data_task** (Green ✓)
-   - Loads data from CSV file
-   - Serializes using pickle
-   - Output: Serialized DataFrame
-
-2. **data_preprocessing_task** (Green ✓)
-   - Deserializes input data
-   - Removes missing values
-   - Selects features: BALANCE, PURCHASES, CREDIT_LIMIT
-   - Applies MinMaxScaler normalization
-   - Output: Normalized features
-
-3. **build_save_model_task** (Green ✓)
-   - Trains K-Means models for clusters 1-50
-   - Calculates SSE (Sum of Squared Errors)
-   - Saves model to `dags/model/model.sav`
-   - Output: SSE values for elbow analysis
-
-4. **load_model_task** (Green ✓)
-   - Loads saved K-Means model
-   - Applies KneeLocator for elbow method
-   - Makes predictions on test data
-   - Logs optimal cluster count
-
-**Execution Summary:**
-- Total Duration: 00:00:20 (20 seconds)
-- Status: All tasks completed successfully
-- Color: Green boxes indicate success
-- All dependencies met and executed in proper sequence
-
----
-
-## 5. Results - Optimal Clusters Found
-
-<img width="1920" height="954" alt="Screenshot (270)" src="https://github.com/user-attachments/assets/ef27eec2-12c3-4dc4-96ab-d2dd0a5c5afb" />
-
-
-**Description:** Task logs from the final `load_model_task` showing the critical result:
+## Workflow Architecture
 
 ```
-[2025-10-20, 17:31:36 UTC] (logging_mixin.py:188) INFO - Optimal no. of clusters: 8
+┌─────────────────────┐
+│   load_data_task    │
+│  (Load Iris Data)   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────────────────┐
+│  data_preprocessing_task        │
+│  (Scale & Binary Classification)│
+└──────────┬──────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────┐
+│   build_save_model_task          │
+│  (Train Random Forest & Evaluate)│
+└──────────┬───────────────────────┘
+           │
+           ▼
+┌────────────────────────────────┐
+│    load_model_task             │
+│  (Feature Importance Analysis) │
+└────────────────────────────────┘
 ```
 
----
+## Files Modified
 
-## Workflow Summary Table
+### 1. `dags/src/lab.py`
+Complete rewrite with 4 functions:
+- `load_data()` - Loads Iris dataset using sklearn
+- `data_preprocessing()` - Scales features and converts to binary classification
+- `build_save_model()` - Trains Random Forest and evaluates performance
+- `load_model_elbow()` - Analyzes feature importance
 
-| Step | Task Name | Input | Processing | Output | Status |
-|------|-----------|-------|-----------|--------|--------|
-| 1 | load_data_task | file.csv | Read CSV, serialize | Serialized DataFrame | ✓ Success |
-| 2 | data_preprocessing_task | Serialized data | Normalize features | Normalized array | ✓ Success |
-| 3 | build_save_model_task | Normalized data | Train K-Means 1-50 | SSE values + model | ✓ Success |
-| 4 | load_model_task | SSE + model | Elbow method | **Clusters: 8** | ✓ Success |
+### 2. `dags/airflow.py`
+Updated DAG definition:
+- DAG name: `Airflow_Lab1_WineQuality`
+- 4 sequential tasks with dependencies
+- XCom enabled for data passing between tasks
+- Manual trigger (no scheduling)
 
----
+### 3. `docker-compose.yaml`
+Updated configuration:
+- `AIRFLOW__CORE__LOAD_EXAMPLES: 'false'`
+- Added Python packages: `pandas scikit-learn kneed joblib`
+- `AIRFLOW__CORE__ENABLE_XCOM_PICKLING: 'true'`
+- Updated web credentials: `airflow2/airflow2`
 
-## Key Findings and Results
-
-**Primary Result:** Optimal number of clusters = **8**
-
-**Dataset Information:**
-- Source: Advertising dataset
-- Features used: BALANCE, PURCHASES, CREDIT_LIMIT
-- Training samples: Loaded from file.csv
-- Test samples: Loaded from test.csv
-
-**K-Means Configuration:**
-- Cluster range tested: 1-50
-- Initialization method: Random (10 init)
-- Maximum iterations: 300
-- Random state: 42 (reproducible)
-
-**Elbow Method:**
-- Tool: KneeLocator library
-- Curve type: Convex
-- Direction: Decreasing
-- Result: Knee point identified at cluster count = 8
-
-**Model Artifacts:**
-- Saved model: `dags/model/model.sav`
-- Model type: Trained K-Means object with 8 clusters
-- Test prediction: First test sample assigned to cluster 5
-
----
-
-## Steps to run Lab 1
+## How to Run
 
 ### Prerequisites
 - Docker Desktop installed and running
-- 4GB+ RAM allocated to Docker
-- Working directory: C:\airflow_work\Lab_1
+- Minimum 4GB RAM allocated to Docker (8GB recommended)
 
-### Steps
+### Setup and Execution
 
-1. **Start Airflow**
-   ```
-   docker compose up
-   ```
-   Wait 2-3 minutes for services to start.
+1. **Navigate to the lab directory:**
+```bash
+cd Lab1
+```
 
-2. **Access Web Interface**
-   - Open browser to http://localhost:8080
-   - Login with airflow2/airflow2
+2. **Start Airflow with Docker:**
+```bash
+docker compose up
+```
 
-3. **Trigger the DAG**
-   - Navigate to DAGs page
-   - Find "Airflow_Lab1"
-   - Click the play button (▶)
-   - Click "Trigger" to confirm
+3. **Wait for initialization** (1-2 minutes until you see):
+```
+airflow-scheduler-1 | 127.0.0.1 - - [...] "GET /health HTTP/1.1" 200 -
+```
 
-4. **Monitor Execution**
-   - Click on Airflow_Lab1
-   - Go to "Graph" tab
-   - Watch tasks turn green as they complete
+4. **Access Airflow UI:**
+```
+http://localhost:8081
+```
 
-5. **View Results**
-   - Click on load_model_task (rightmost box)
-   - Click "Logs" tab
-   - Look for "Optimal no. of clusters: 8"
+5. **Login credentials:**
+- Username: `airflow2`
+- Password: `airflow2`
 
-6. **Stop Airflow**
-   ```
-   docker compose down
+6. **Trigger the DAG:**
+- Find `Airflow_Lab1_WineQuality` in the DAG list
+- Toggle the DAG to "On" (enable it)
+- Click "Trigger DAG" button
+- Monitor execution in the Graph view
 
-   ```
----
+7. **View Results:**
+- Go to Graph tab
+- Click on `load_model_task` (last task)
+- Click "Logs" tab
+- Scroll to see model accuracy and feature importance
 
-## Files Generated During Execution
+### Stopping Airflow
+```bash
+docker compose down
+```
 
-After running the DAG, the following files are created:
+## Project Structure
 
-- `dags/model/model.sav` - Trained K-Means model with 8 clusters
-- `logs/dag_id=Airflow_Lab1/...` - Execution logs for each task
-- `working_data/` - Any intermediate data (if configured)
+```
+Lab1/
+├── dags/
+│   ├── src/
+│   │   ├── __init__.py
+│   │   └── lab.py                 # Modified - New logic
+│   ├── airflow.py                 # Modified - New DAG
+│   ├── data/                       # (Generated at runtime)
+│   └── model/                      # (Generated at runtime)
+├── logs/                           # Execution logs
+├── config/                         # Configuration
+├── plugins/                        # Airflow plugins
+├── docker-compose.yaml             # Modified - Updated config
+├── .env                            # Environment variables
+└── README.md                       # This file
+```
 
----
+## Key Improvements Over Original
 
+| Aspect | Original | Enhanced |
+|--------|----------|----------|
+| **Problem Type** | Unsupervised (Clustering) | Supervised (Classification) |
+| **Dataset** | Generic data | Iris (well-known benchmark) |
+| **Model** | K-Means | Random Forest |
+| **Output Metrics** | Cluster count | Accuracy, Precision, Recall, F1 |
+| **Feature Analysis** | Cluster centers | Feature importance ranking |
+| **Real-world Use** | Grouping similar items | Predictive classification |
+| **Interpretability** | Low | High |
 
-**Lab Status:** COMPLETED SUCCESSFULLY 
+## Model Performance
 
-**Date Completed:** October 20, 2025
+The Random Forest classifier trained on Iris dataset achieves:
+- High accuracy on binary classification task (Virginica detection)
+- Clear feature importance insights
+- Robust generalization with train-test split
 
-**Result Achieved:** Optimal K-Means clusters = 8
+## Technologies Used
+- **Apache Airflow 2.9.2** - Workflow orchestration
+- **Python 3.12** - Programming language
+- **scikit-learn** - Machine learning library
+- **pandas** - Data manipulation
+- **joblib** - Model serialization
+- **Docker** - Containerization
 
----
+## Conclusion
+This enhanced version demonstrates a practical transition from exploratory data analysis (clustering) to predictive analytics (classification). The workflow is production-ready and showcases best practices in MLOps including proper train-test splitting, model evaluation, and feature importance analysis.
+
