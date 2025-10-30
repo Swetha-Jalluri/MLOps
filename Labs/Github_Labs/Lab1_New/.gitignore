@@ -1,9 +1,10 @@
-# Virtual Environment
-github_lab1_env/
+# === Virtual Environment ===
 venv/
 env/
+.github_lab1_env/
+.github_lab1_env*/  # in case of variations
 
-# Python
+# === Python Cache & Build Files ===
 __pycache__/
 *.py[cod]
 *$py.class
@@ -25,27 +26,31 @@ wheels/
 .installed.cfg
 *.egg
 
-# Model files
+# === Artifacts & Model Files ===
+artifacts/
+mlruns/
 *.pkl
 *.joblib
 *.h5
 *.pt
 *.pth
+*.json
+*.png
 
-# Data files (optional - remove if you want to track data)
+# === Data Files (Optional) ===
+# Comment this section if you want to include your dataset in the repo
+data/
 *.csv
 *.xlsx
 
-# IDE
+# === IDE & OS Files ===
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Jupyter
+# === Jupyter Notebooks ===
 .ipynb_checkpoints/
 *.ipynb
